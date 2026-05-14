@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Retail Bank — Agentic AI Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dim: #8B6F2E;
+  --bg: #111111;
+  --surface: #1A1A1A;
+  --surface2: #222222;
+  --surface3: #2A2A2A;
+  --border: rgba(255,255,255,0.08);
+  --text: #F5F5F5;
+  --text2: #A0A0A0;
+  --text3: #666;
+  --green: #22C55E;
+  --amber: #F59E0B;
+  --blue: #3B82F6;
+  --purple: #8B5CF6;
+  --red: #EF4444;
+  --r: 14px;
+  --r-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: #0A0A0A; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+/* ── Outer demo frame ── */
+.demo-wrap {
+  display: flex;
+  min-height: 100vh;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  padding: 32px 24px;
+  background: #0A0A0A;
+}
+
+/* ── Phone shell ── */
+.phone {
+  width: 375px;
+  min-height: 812px;
+  background: var(--bg);
+  border-radius: 48px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  position: relative;
+}
+.phone-notch {
+  width: 126px; height: 34px;
+  background: #000;
+  border-radius: 0 0 22px 22px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 28px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: -34px;
+  position: relative;
+  z-index: 11;
+}
+.status-icons { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+.battery {
+  width: 24px; height: 12px;
+  border: 1.5px solid rgba(255,255,255,0.6);
+  border-radius: 3px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 1.5px;
+}
+.battery::after {
+  content: '';
+  position: absolute;
+  right: -4px; top: 50%;
+  transform: translateY(-50%);
+  width: 2px; height: 5px;
+  background: rgba(255,255,255,0.4);
+  border-radius: 0 1px 1px 0;
+}
+.battery-fill { background: #fff; border-radius: 1px; height: 100%; width: 55%; }
+
+/* ── Scroll area ── */
+.screen { overflow-y: auto; height: 812px; scrollbar-width: none; }
+.screen::-webkit-scrollbar { display: none; }
+.content { padding-bottom: 100px; }
+
+/* ── Header ── */
+.app-header {
+  padding: 48px 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.greeting { display: flex; align-items: center; gap: 12px; }
+.avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #000;
+  flex-shrink: 0;
+}
+.greeting-text .hey { font-size: 12px; color: var(--text2); font-weight: 400; }
+.greeting-text .name { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+.header-actions { display: flex; gap: 12px; align-items: center; }
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--text2);
+  position: relative;
+}
+.notif-dot {
+  position: absolute; top: 7px; right: 7px;
+  width: 7px; height: 7px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 1.5px solid var(--bg);
+}
+
+/* ── Balance card ── */
+.balance-card {
+  margin: 0 16px 16px;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+.balance-card-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.balance-inner { padding: 20px; position: relative; z-index: 1; }
+.balance-label { font-size: 11px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.balance-amount { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; font-family: 'DM Mono', monospace; }
+.balance-masked { filter: blur(6px); user-select: none; }
+.eye-btn { background: none; border: none; color: var(--text3); cursor: pointer; vertical-align: middle; margin-left: 6px; }
+.loan-line { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.quick-actions {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border);
+  padding: 14px 4px;
+}
+.qa-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.qa-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  color: #000;
+  font-size: 20px;
+}
+.qa-label { font-size: 11px; color: var(--text2); text-align: center; line-height: 1.3; }
+
+/* ── Notification / offer banner ── */
+.notif-banner {
+  margin: 0 16px 16px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  overflow: hidden;
+  position: relative;
+  min-height: 64px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+.notif-banner.generic { border-left: 3px solid var(--text3); }
+.notif-banner.personalized { border-left: 3px solid var(--gold); }
+.notif-banner.green-accent { border-left: 3px solid var(--green); }
+.notif-banner.amber-accent { border-left: 3px solid var(--amber); }
+.notif-banner.blue-accent { border-left: 3px solid var(--blue); }
+.notif-banner.purple-accent { border-left: 3px solid var(--purple); }
+.banner-inner {
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.banner-icon-wrap {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.banner-text { flex: 1; }
+.banner-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 2px; font-weight: 600; }
+.banner-msg { font-size: 13px; color: var(--text); line-height: 1.4; }
+.banner-cta {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(201,168,76,0.25);
+}
+.banner-dots {
+  display: flex; gap: 4px;
+  justify-content: center;
+  padding-bottom: 8px;
+}
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--surface3); transition: background 0.3s; }
+.dot.active { background: var(--gold); width: 14px; border-radius: 3px; }
+
+/* ── Quick links section ── */
+.section { margin: 0 16px 16px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.section-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.section-edit { font-size: 12px; color: var(--gold); cursor: pointer; }
+.shortcut-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.shortcut {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  cursor: pointer;
+}
+.shortcut-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.shortcut-label { font-size: 11px; color: var(--text2); text-align: center; line-height: 1.3; }
+
+/* ── Product tiles ── */
+.product-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; margin: 0 16px 16px; }
+.promo-tile {
+  grid-column: 1; grid-row: 1 / 3;
+  border-radius: var(--r);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  min-height: 130px;
+  position: relative;
+}
+.promo-img {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #1a3a2a, #0d2016);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+.promo-content { position: relative; z-index: 1; padding: 10px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); }
+.promo-text { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.product-tile {
+  border-radius: var(--r);
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+  border: none;
+}
+.product-tile .tile-label { font-size: 14px; font-weight: 700; color: #000; }
+.product-tile .tile-emoji { font-size: 22px; }
+
+/* ── Bottom nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 375px;
+  background: rgba(17,17,17,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 10px 0 24px;
+  z-index: 100;
+}
+.nav-item-b {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 500;
+  color: var(--text3); cursor: pointer;
+}
+.nav-item-b.active { color: var(--gold); }
+.nav-item-b .material-icons-round { font-size: 22px; }
+.nav-explore {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: -20px;
+  box-shadow: 0 4px 16px rgba(201,168,76,0.4);
+}
+.nav-explore .material-icons-round { font-size: 22px; color: #000; }
+
+/* ── Right panel: Demo controls ── */
+.demo-panel {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 12px;
+}
+.panel-card {
+  background: #1A1A1A;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 20px;
+}
+.panel-title { font-size: 14px; font-weight: 600; color: #F5F5F5; margin-bottom: 4px; }
+.panel-sub { font-size: 12px; color: #666; margin-bottom: 16px; line-height: 1.5; }
+.customer-list { display: flex; flex-direction: column; gap: 8px; }
+.customer-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #222;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.2s, background 0.2s;
+}
+.customer-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+.customer-btn .c-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #000; flex-shrink: 0;
+}
+.customer-btn .c-info .c-name { font-size: 13px; font-weight: 600; color: #F5F5F5; }
+.customer-btn .c-info .c-seg { font-size: 11px; color: #666; }
+
+.triggers-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.trigger-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.15);
+  font-size: 12px; color: #F5F5F5;
+}
+.trigger-item .material-icons-round { font-size: 16px; color: var(--amber); }
+.trigger-none { font-size: 12px; color: #666; font-style: italic; }
+
+.offer-preview-list { display: flex; flex-direction: column; gap: 8px; }
+.offer-preview {
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 12px;
+  background: #222;
+}
+.offer-preview .op-type { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); font-weight: 600; margin-bottom: 3px; }
+.offer-preview .op-title { font-size: 13px; font-weight: 600; color: #F5F5F5; margin-bottom: 3px; }
+.offer-preview .op-body { font-size: 11px; color: #888; line-height: 1.4; }
+
+.vs-badge {
+  text-align: center;
+  padding: 10px;
+  font-size: 12px;
+  color: #555;
+  position: relative;
+}
+.vs-badge::before, .vs-badge::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+}
+.vs-badge span {
+  position: relative; z-index: 1;
+  background: #0A0A0A;
+  padding: 0 10px;
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #222;
+  border: 1px solid rgba(201,168,76,0.3);
+  color: #F5F5F5;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Loading ── */
+.loading-overlay {
+  position: absolute; inset: 0;
+  background: rgba(17,17,17,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  border-radius: 48px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.loading-overlay.show { opacity: 1; pointer-events: all; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(201,168,76,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { color: var(--text2); font-size: 13px; margin-top: 10px; }
+.loading-wrap { text-align: center; }
+
+/* ── Agentic mode toggle ── */
+.mode-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  background: #1A1A1A;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  margin-bottom: 4px;
+}
+.mode-label { font-size: 13px; font-weight: 500; color: #F5F5F5; }
+.mode-sub { font-size: 11px; color: #555; }
+.toggle-sw {
+  width: 42px; height: 24px;
+  border-radius: 999px;
+  background: #333;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+  flex-shrink: 0;
+  border: none;
+  outline: none;
+}
+.toggle-sw.on { background: var(--gold); }
+.toggle-sw::after {
+  content: '';
+  position: absolute;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px; left: 3px;
+  transition: transform 0.3s;
+}
+.toggle-sw.on::after { transform: translateX(18px); }
+
+@media (max-width: 780px) {
+  .demo-wrap { flex-direction: column; align-items: center; padding: 16px; }
+  .demo-panel { width: 375px; }
+}
+</style>
+</head>
+<body>
+
+<div class="demo-wrap">
+
+  <!-- ══════════════ PHONE ══════════════ -->
+  <div class="phone">
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-wrap">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Analysing profile…</div>
+      </div>
+    </div>
+
+    <div class="phone-notch"></div>
+    <div class="screen" id="mainScreen">
+      <div class="content">
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span>7:45</span>
+          <div class="status-icons">
+            <span class="material-icons-round" style="font-size:14px">signal_cellular_alt</span>
+            <span class="material-icons-round" style="font-size:14px">wifi</span>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <div class="app-header">
+          <div class="greeting">
+            <div class="avatar" id="headerAvatar">MM</div>
+            <div class="greeting-text">
+              <div class="hey">Good Morning</div>
+              <div class="name" id="headerName">MERCY</div>
+            </div>
+          </div>
+          <div class="header-actions">
+            <div class="icon-btn">
+              <span class="material-icons-round" style="font-size:20px">qr_code_scanner</span>
+            </div>
+            <div class="icon-btn">
+              <span class="material-icons-round" style="font-size:20px">notifications</span>
+              <div class="notif-dot" id="notifDot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance card -->
+        <div class="balance-card">
+          <div class="balance-card-bg"></div>
+          <div class="balance-inner">
+            <div class="balance-label" id="balanceLabel">Balance (127****840)</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="balance-amount balance-masked" id="balanceAmt">KES ••••••</div>
+              <button class="eye-btn" onclick="toggleBalance()" aria-label="Show balance">
+                <span class="material-icons-round" style="font-size:18px" id="eyeIcon">visibility_off</span>
+              </button>
+            </div>
+            <div class="loan-line">KCB Mobile Loan Limit: ••••••</div>
+          </div>
+          <div class="quick-actions">
+            <div class="qa-item">
+              <div class="qa-icon"><span class="material-icons-round">near_me</span></div>
+              <div class="qa-label">Send to Mobile</div>
+            </div>
+            <div class="qa-item">
+              <div class="qa-icon"><span class="material-icons-round">swap_horiz</span></div>
+              <div class="qa-label">Send to Bank</div>
+            </div>
+            <div class="qa-item">
+              <div class="qa-icon"><span class="material-icons-round">arrow_upward</span></div>
+              <div class="qa-label">Pay</div>
+            </div>
+            <div class="qa-item">
+              <div class="qa-icon"><span class="material-icons-round">arrow_downward</span></div>
+              <div class="qa-label">Deposit & Withdraw</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ★ THE NOTIFICATION BANNER — this is where magic happens ★ -->
+        <div class="notif-banner generic" id="notifBanner" onclick="bannerClicked()">
+          <div class="banner-inner">
+            <div class="banner-icon-wrap" id="bannerIconWrap">
+              <span class="material-icons-round" style="color:#888;" id="bannerIcon">campaign</span>
+            </div>
+            <div class="banner-text">
+              <div class="banner-label" id="bannerLabel">Security update</div>
+              <div class="banner-msg" id="bannerMsg">Your security is now upgraded! Activate fingerprint or Face ID for safer, faster access.</div>
+              <span class="banner-cta" id="bannerCta" style="display:none">Activate now →</span>
+            </div>
+          </div>
+          <div class="banner-dots" id="bannerDots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+
+        <!-- Quick shortcuts -->
+        <div class="section">
+          <div class="section-header">
+            <div class="section-title">What would you like to do today?</div>
+            <div class="section-edit">Edit</div>
+          </div>
+          <div class="shortcut-grid">
+            <div class="shortcut">
+              <div class="shortcut-icon" style="background:rgba(155,48,255,0.15)">🔄</div>
+              <div class="shortcut-label">Pay to VOOMA</div>
+            </div>
+            <div class="shortcut">
+              <div class="shortcut-icon" style="background:rgba(34,197,94,0.15)">📱</div>
+              <div class="shortcut-label">Airtime</div>
+            </div>
+            <div class="shortcut">
+              <div class="shortcut-icon" style="background:rgba(59,130,246,0.15)">🧾</div>
+              <div class="shortcut-label">My Bills</div>
+            </div>
+            <div class="shortcut">
+              <div class="shortcut-icon" style="background:rgba(201,168,76,0.15)">⊞</div>
+              <div class="shortcut-label">Scan QR</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product tiles -->
+        <div class="product-grid">
+          <div class="promo-tile">
+            <div class="promo-img">🛒</div>
+            <div class="promo-content">
+              <div class="promo-text">Save big on groceries with KCB…</div>
+            </div>
+          </div>
+          <div class="product-tile"><span class="tile-label">Save</span><span class="tile-emoji">🪙</span></div>
+          <div class="product-tile"><span class="tile-label">Loans</span><span class="tile-emoji">💵</span></div>
+          <div class="product-tile"><span class="tile-label">Invest</span><span class="tile-emoji">🌱</span></div>
+          <div class="product-tile"><span class="tile-label">More</span><span class="tile-emoji">➡️</span></div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /screen -->
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item-b active">
+        <span class="material-icons-round">home</span>Home
+      </div>
+      <div class="nav-item-b">
+        <span class="material-icons-round">account_balance</span>Transact
+      </div>
+      <div class="nav-item-b">
+        <div class="nav-explore">
+          <span class="material-icons-round">travel_explore</span>
+        </div>
+        Explore
+      </div>
+      <div class="nav-item-b">
+        <span class="material-icons-round">person</span>Account
+      </div>
+      <div class="nav-item-b">
+        <span class="material-icons-round">headset_mic</span>Help
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+
+  <!-- ══════════════ DEMO PANEL ══════════════ -->
+  <div class="demo-panel">
+
+    <div style="padding-top:8px">
+      <div style="font-size:22px;font-weight:700;color:#F5F5F5;margin-bottom:4px">KCB Agentic AI</div>
+      <div style="font-size:13px;color:#666;line-height:1.6">Switch the banner from a generic rotating notification to a personalised AI-driven offer — triggered by real financial signals.</div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <div>
+        <div class="mode-label">Agentic AI mode</div>
+        <div class="mode-sub" id="modeSubText">Currently: generic rotating banners</div>
+      </div>
+      <button class="toggle-sw" id="agentToggle" onclick="toggleAgentMode()" aria-label="Toggle agentic mode"></button>
+    </div>
+
+    <!-- Customer selector -->
+    <div class="panel-card">
+      <div class="panel-title">Select customer</div>
+      <div class="panel-sub">Each customer has different financial signals — watch the banner change.</div>
+      <div class="customer-list" id="customerList"></div>
+    </div>
+
+    <!-- Detected triggers -->
+    <div class="panel-card">
+      <div class="panel-title">⚡ Detected triggers</div>
+      <div id="triggersList"><div class="trigger-none">Run agent to detect triggers</div></div>
+    </div>
+
+    <!-- Offer preview -->
+    <div class="panel-card">
+      <div class="panel-title">💡 Personalised offers generated</div>
+      <div id="offersList"><div class="trigger-none">No offers yet</div></div>
+    </div>
+
+  </div><!-- /demo-panel -->
+</div><!-- /demo-wrap -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GENERIC_BANNERS = [
+  { label: "Security update", msg: "Your security is now upgraded! Activate fingerprint or Face ID for safer, faster access.", icon: "security", color: "generic", cta: "Activate now →" },
+  { label: "New feature", msg: "Introducing KCB Pay Later — shop now, pay in flexible instalments with zero interest for 30 days.", icon: "new_releases", color: "generic", cta: "Learn more →" },
+  { label: "Refer & earn", msg: "Invite a friend to KCB and both of you earn KES 200 airtime on their first transaction.", icon: "group_add", color: "generic", cta: "Invite now →" },
+];
+
+const COLOR_MAP = { green: "green-accent", amber: "amber-accent", blue: "blue-accent", purple: "purple-accent", default: "personalized" };
+const ICON_COLOR = { green: "#22C55E", amber: "#F59E0B", blue: "#3B82F6", purple: "#8B5CF6" };
+
+let state = {
+  agentOn: false,
+  currentCustomer: "C001",
+  customers: [],
+  triggers: [],
+  offers: [],
+  genericIdx: 0,
+  genericTimer: null,
+  balanceVisible: false,
+  currentBalance: 24500,
+  currentName: "MERCY",
+  currentAvatar: "MM",
+  offerIdx: 0,
+};
+
+async function fetchData(customerId) {
+  try {
+    const res = await fetch(`/api?customer_id=${customerId}`);
+    if (!res.ok) throw new Error("API error");
+    return await res.json();
+  } catch {
+    // Fallback mock data for static preview
+    return getMockData(customerId);
+  }
+}
+
+function getMockData(id) {
+  const data = {
+    C001: {
+      customer: { name: "Mercy", avatar: "MM", current_balance: 24500, savings_goal: "Emergency fund + gadgets", monthly_income: 58000, previous_month_income: 50000, monthly_spending: 40000, previous_month_spending: 36000},
+      triggers: [{ type: "SALARY_INCREASE", label: "Salary up +16.0%", icon: "trending_up" }, { type: "SPEND_SPIKE", label: "Spending spike >15% MoM", icon: "warning" }],
+      offers: [
+        { type: "Goal-Based Savings", title: "Boost your Emergency fund savings", body: "Your income just increased! Auto-save KES 3,600/month towards your goal — you won't miss it.", cta: "Start saving", color: "green", icon: "rocket_launch" },
+        { type: "Smart Budget Alert", title: "Your spending spiked this month", body: "We noticed higher spending. Enable category alerts and set weekly caps to protect your savings.", cta: "Enable alerts", color: "amber", icon: "shield" }
+      ],
+      all_customers: [
+        { id: "C001", name: "Mercy", segment: "Mass Affluent", avatar: "MM" },
+        { id: "C002", name: "Amina", segment: "Personal", avatar: "AN" },
+        { id: "C003", name: "Kevin", segment: "Mass Affluent", avatar: "KO" }
+      ]
+    },
+    C002: {
+      customer: { name: "Amina", avatar: "AN", current_balance: 9800, savings_goal: "School fees", monthly_income: 42000, previous_month_income: 42000, monthly_spending: 41000, previous_month_spending: 36000 },
+      triggers: [{ type: "SPEND_SPIKE", label: "Spending spike >15% MoM", icon: "warning" }, { type: "LOW_SAVINGS", label: "Low savings capacity", icon: "savings" }],
+      offers: [
+        { type: "Smart Budget Alert", title: "Protect your school fees savings", body: "Spending jumped 13.8% this month. Set a weekly cap on shopping to stay on track.", cta: "Enable alerts", color: "amber", icon: "shield" },
+        { type: "Round-up Savings", title: "Save automatically on every purchase", body: "Round up every card transaction and save the difference. Effortless way to build school fees.", cta: "Turn on round-ups", color: "purple", icon: "autorenew" }
+      ],
+      all_customers: [
+        { id: "C001", name: "Mercy", segment: "Mass Affluent", avatar: "MM" },
+        { id: "C002", name: "Amina", segment: "Personal", avatar: "AN" },
+        { id: "C003", name: "Kevin", segment: "Mass Affluent", avatar: "KO" }
+      ]
+    },
+    C003: {
+      customer: { name: "Kevin", avatar: "KO", current_balance: 210000, savings_goal: "Home deposit", monthly_income: 180000, previous_month_income: 175000, monthly_spending: 90000, previous_month_spending: 88000 },
+      triggers: [{ type: "SALARY_INCREASE", label: "Salary up +2.9%", icon: "trending_up" }],
+      offers: [
+        { type: "Fixed Deposit", title: "Your balance is working harder", body: "You have a strong balance sitting idle. Move part of it to a fixed deposit and earn higher returns.", cta: "View fixed deposit", color: "blue", icon: "account_balance" },
+        { type: "Goal-Based Savings", title: "Accelerate your home deposit", body: "Your income increased. Auto-save KES 18,000/month and reach your home deposit target faster.", cta: "Start saving", color: "green", icon: "rocket_launch" }
+      ],
+      all_customers: [
+        { id: "C001", name: "Mercy", segment: "Mass Affluent", avatar: "MM" },
+        { id: "C002", name: "Amina", segment: "Personal", avatar: "AN" },
+        { id: "C003", name: "Kevin", segment: "Mass Affluent", avatar: "KO" }
+      ]
+    }
+  };
+  return data[id] || data["C001"];
+}
+
+function renderCustomerList(customers, activeId) {
+  const el = document.getElementById("customerList");
+  el.innerHTML = customers.map(c => `
+    <button class="customer-btn ${c.id === activeId ? 'active' : ''}" onclick="selectCustomer('${c.id}')">
+      <div class="c-avatar">${c.avatar}</div>
+      <div class="c-info">
+        <div class="c-name">${c.name}</div>
+        <div class="c-seg">${c.segment}</div>
+      </div>
+    </button>
+  `).join("");
+}
+
+function renderTriggers(triggers) {
+  const el = document.getElementById("triggersList");
+  if (!triggers.length) {
+    el.innerHTML = `<div class="trigger-none">No major changes detected</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="triggers-list">${triggers.map(t => `
+    <div class="trigger-item">
+      <span class="material-icons-round">${t.icon}</span>
+      ${t.label}
+    </div>`).join("")}</div>`;
+}
+
+function renderOffers(offers) {
+  const el = document.getElementById("offersList");
+  if (!offers.length) {
+    el.innerHTML = `<div class="trigger-none">No offers generated</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="offer-preview-list">${offers.map(o => `
+    <div class="offer-preview">
+      <div class="op-type">${o.type}</div>
+      <div class="op-title">${o.title}</div>
+      <div class="op-body">${o.body}</div>
+    </div>`).join("")}</div>`;
+}
+
+function setGenericBanner() {
+  const b = GENERIC_BANNERS[state.genericIdx % GENERIC_BANNERS.length];
+  const banner = document.getElementById("notifBanner");
+  const iconWrap = document.getElementById("bannerIconWrap");
+  banner.className = "notif-banner generic";
+  banner.style.borderLeftColor = "";
+  document.getElementById("bannerLabel").textContent = b.label;
+  document.getElementById("bannerMsg").textContent = b.msg;
+  document.getElementById("bannerIcon").textContent = b.icon;
+  document.getElementById("bannerIcon").style.color = "#888";
+  iconWrap.style.background = "var(--surface3)";
+  const ctaEl = document.getElementById("bannerCta");
+  ctaEl.textContent = b.cta;
+  ctaEl.style.display = "none";
+  updateDots(state.genericIdx % GENERIC_BANNERS.length, GENERIC_BANNERS.length);
+}
+
+function setPersonalizedBanner(offer, idx) {
+  const banner = document.getElementById("notifBanner");
+  const iconWrap = document.getElementById("bannerIconWrap");
+  const colorClass = COLOR_MAP[offer.color] || "personalized";
+  banner.className = `notif-banner ${colorClass}`;
+  document.getElementById("bannerLabel").textContent = "✦ Personalised for you";
+  document.getElementById("bannerMsg").textContent = offer.body;
+  document.getElementById("bannerIcon").textContent = offer.icon || "auto_awesome";
+  const iconColor = ICON_COLOR[offer.color] || "#C9A84C";
+  document.getElementById("bannerIcon").style.color = iconColor;
+  iconWrap.style.background = `${iconColor}18`;
+  const ctaEl = document.getElementById("bannerCta");
+  ctaEl.textContent = (offer.cta || "Learn more") + " →";
+  ctaEl.style.display = "inline-block";
+  updateDots(idx % state.offers.length, state.offers.length);
+}
+
+function updateDots(active, total) {
+  const container = document.getElementById("bannerDots");
+  container.innerHTML = Array.from({ length: total }, (_, i) =>
+    `<div class="dot ${i === active ? 'active' : ''}"></div>`
+  ).join("");
+}
+
+function startGenericRotation() {
+  clearInterval(state.genericTimer);
+  setGenericBanner();
+  state.genericTimer = setInterval(() => {
+    state.genericIdx++;
+    setGenericBanner();
+  }, 2500);
+}
+
+function startPersonalizedRotation() {
+  clearInterval(state.genericTimer);
+  if (!state.offers.length) return;
+  state.offerIdx = 0;
+  setPersonalizedBanner(state.offers[0], 0);
+  state.genericTimer = setInterval(() => {
+    state.offerIdx = (state.offerIdx + 1) % state.offers.length;
+    setPersonalizedBanner(state.offers[state.offerIdx], state.offerIdx);
+  }, 3500);
+}
+
+function toggleAgentMode() {
+  state.agentOn = !state.agentOn;
+  const btn = document.getElementById("agentToggle");
+  const sub = document.getElementById("modeSubText");
+  btn.classList.toggle("on", state.agentOn);
+  if (state.agentOn) {
+    sub.textContent = "Currently: personalised AI offers";
+    if (state.offers.length) startPersonalizedRotation();
+    else loadCustomer(state.currentCustomer);
+  } else {
+    sub.textContent = "Currently: generic rotating banners";
+    startGenericRotation();
+  }
+}
+
+async function selectCustomer(id) {
+  if (id === state.currentCustomer && state.triggers.length) return;
+  state.currentCustomer = id;
+  await loadCustomer(id);
+}
+
+async function loadCustomer(id) {
+  const overlay = document.getElementById("loadingOverlay");
+  const loadText = document.getElementById("loadingText");
+  overlay.classList.add("show");
+  loadText.textContent = "Analysing profile…";
+
+  await new Promise(r => setTimeout(r, 400));
+  loadText.textContent = "Detecting triggers…";
+  await new Promise(r => setTimeout(r, 500));
+  loadText.textContent = "Generating offers…";
+  await new Promise(r => setTimeout(r, 400));
+
+  const data = await fetchData(id);
+  overlay.classList.remove("show");
+
+  const c = data.customer;
+  state.currentName = c.name.toUpperCase();
+  state.currentAvatar = c.avatar || c.name.substring(0, 2).toUpperCase();
+  state.currentBalance = c.current_balance;
+  state.triggers = data.triggers;
+  state.offers = data.offers;
+
+  // Update phone UI
+  document.getElementById("headerName").textContent = state.currentName;
+  document.getElementById("headerAvatar").textContent = state.currentAvatar;
+  document.getElementById("notifDot").style.display = state.triggers.length ? "block" : "none";
+
+  // Update panel
+  renderCustomerList(data.all_customers || state.customers, id);
+  renderTriggers(state.triggers);
+  renderOffers(state.offers);
+
+  if (state.customers.length === 0 && data.all_customers) {
+    state.customers = data.all_customers;
+  }
+
+  if (state.agentOn && state.offers.length) {
+    startPersonalizedRotation();
+    showToast(`✦ ${state.offers.length} personalised offer${state.offers.length > 1 ? 's' : ''} generated for ${c.name}`);
+  } else if (!state.agentOn) {
+    startGenericRotation();
+  }
+}
+
+function bannerClicked() {
+  if (state.agentOn && state.offers.length) {
+    const offer = state.offers[state.offerIdx];
+    showToast(`Offer: "${offer.title}" — ${offer.cta}`);
+  }
+}
+
+function toggleBalance() {
+  state.balanceVisible = !state.balanceVisible;
+  const el = document.getElementById("balanceAmt");
+  const icon = document.getElementById("eyeIcon");
+  if (state.balanceVisible) {
+    el.textContent = `KES ${state.currentBalance.toLocaleString()}`;
+    el.classList.remove("balance-masked");
+    icon.textContent = "visibility";
+  } else {
+    el.textContent = "KES ••••••";
+    el.classList.add("balance-masked");
+    icon.textContent = "visibility_off";
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// Init
+(async () => {
+  startGenericRotation();
+  const data = await fetchData("C001");
+  state.customers = data.all_customers || [];
+  state.triggers = data.triggers;
+  state.offers = data.offers;
+  renderCustomerList(state.customers, "C001");
+  renderTriggers(state.triggers);
+  renderOffers(state.offers);
+})();
+</script>
+</body>
+</html>
