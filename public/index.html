@@ -703,16 +703,12 @@ let state = {
   offerIdx: 0,
 };
 
+
 async function fetchData(customerId) {
-  try {
-    const res = await fetch("https://kcb-agentic.vercel.app/api?customer_id=" + customerId);
-    if (!res.ok) throw new Error("API error");
-    return await res.json();
-  } catch {
-    // Fallback mock data for static preview
-    return getMockData(customerId);
-  }
+  const res = await fetch("https://your-url/api?customer_id=" + customerId)
+  return await res.json()
 }
+
 
 function getMockData(id) {
   const data = {
