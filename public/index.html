@@ -705,7 +705,7 @@ let state = {
 
 async function fetchData(customerId) {
   try {
-    const res = await fetch(`/api?customer_id=${customerId}`);
+    const res = await fetch("https://kcb-agentic.vercel.app/api?customer_id=" + customerId);
     if (!res.ok) throw new Error("API error");
     return await res.json();
   } catch {
