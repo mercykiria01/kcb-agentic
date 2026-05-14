@@ -705,7 +705,7 @@ let state = {
 
 
 async function fetchData(customerId) {
-  const res = await fetch("https://your-url/api?customer_id=" + customerId)
+  const res = await fetch("https://kcb-agentic.vercel.app/api?customer_id=" + customerId)
   return await res.json()
 }
 
